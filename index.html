@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPU Pregătire - Întrebări și Răspunsuri</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5D5CDE;
+            --secondary-color: #4B4AAA;
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --error-color: #F56565;
+            --light-bg: #FFFFFF;
+            --dark-bg: #181818;
+            --light-text: #333333;
+            --dark-text: #F0F0F0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--dark-bg);
+                color: var(--dark-text);
+            }
+            .bg-white {
+                background-color: #222 !important;
+            }
+            .bg-gray-100 {
+                background-color: #2a2a2a !important;
+            }
+            .text-gray-800 {
+                color: #f0f0f0 !important;
+            }
+            .text-gray-700 {
+                color: #e0e0e0 !important;
+            }
+            .text-gray-600 {
+                color: #d0d0d0 !important;
+            }
+            .text-gray-500 {
+                color: #c0c0c0 !important;
+            }
+            .border-gray-200 {
+                border-color: #444 !important;
+            }
+            .bg-gray-50 {
+                background-color: #333 !important;
+            }
+            .exercise-tab {
+                background-color: #333 !important;
+                color: #f0f0f0 !important;
+            }
+            .exercise-tab.active {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+            input, textarea, select {
+                background-color: #333 !important;
+                color: #f0f0f0 !important;
+                border-color: #555 !important;
+            }
+            .record-button {
+                background-color: #333 !important;
+            }
+            .record-button.recording {
+                background-color: #F56565 !important;
+            }
+            .diff-highlight-add {
+                background-color: rgba(74, 222, 128, 0.2) !important;
+            }
+            .diff-highlight-remove {
+                background-color: rgba(248, 113, 113, 0.2) !important;
+            }
+        }
+
+        .category-tab {
+            transition: all 0.3s ease;
+        }
+
+        .category-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .question-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .answer-section {
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .answer-section.show {
+            max-height: 5000px;
+            opacity: 1;
+        }
+
+        .personal-example {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .tips-container {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .warning-container {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .record-button {
+            transition: all 0.3s ease;
+        }
+
+        .record-button.recording {
+            background-color: var(--error-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #recordingIndicator {
+            transition: opacity 0.3s ease;
+        }
+
+        .highlight-text {
+            background-color: rgba(93, 92, 222, 0.1);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .blinking {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .feedback-container {
+            transition: all 0.3s ease;
+        }
+
+        .question-list {
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+        }
+
+        .progress-container {
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Custom scrollbar styles */
+        .question-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .question-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .question-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .question-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Diff highlight styles */
+        .diff-highlight-add {
+            background-color: rgba(74, 222, 128, 0.1);
+            border-left: 3px solid #4ADE80;
+            padding-left: 8px;
+            margin: 4px 0;
+        }
+
+        .diff-highlight-remove {
+            background-color: rgba(248, 113, 113, 0.1);
+            border-left: 3px solid #F87171;
+            padding-left: 8px;
+            margin: 4px 0;
+            text-decoration: line-through;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(93, 92, 222, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-content {
+            max-height: 2000px;
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+
+        .tab-content.hidden {
+            max-height: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">MPU Pregătire - Întrebări și Răspunsuri</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Exersează răspunsurile pentru MPU și îmbunătățește-le cu exemple personale detaliate!</p>
+        </header>
+
+        <!-- Ghid Modal -->
+        <div id="guideModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg w-full max-w-2xl max-h-90vh overflow-y-auto p-6 relative">
+                <button id="closeGuideModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Ghid pentru răspunsuri autentice la MPU</h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">1. Reformularea răspunsurilor</h3>
+                        <p class="mb-2">Nu învăța răspunsurile <span class="font-bold">cuvânt cu cuvânt</span>! În schimb, înțelege ideea și exprim-o în propriile tale cuvinte.</p>
+                        <p class="text-sm italic">Exercițiu: Ia un răspuns pregătit și spune-l diferit de fiecare dată când îl repeți.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">2. Vorbește ca într-o conversație normală</h3>
+                        <p class="mb-2">Evită să răspunzi prea repede, ca și cum ai recita o poezie.</p>
+                        <p class="mb-2">Dacă ai nevoie de o secundă să te gândești, ia-ți acel timp.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">3. Folosește exemple personale</h3>
+                        <p class="mb-2">În loc să dai un răspuns general, leagă-l de o <span class="font-bold">experiență reală din viața ta</span>.</p>
+                        <div class="bg-white p-3 rounded border border-gray-200 mt-2">
+                            <p class="font-semibold text-sm">Exemplu:</p>
+                            <p class="text-sm mb-2">Dacă trebuie să explici de ce ai consumat alcool în trecut, nu spune doar <span class="text-red-500">"Din cauza stresului"</span>, ci explică mai detaliat:</p>
+                            <p class="text-sm italic">"Eram mereu stresat din cauza problemelor la muncă și mă simțeam epuizat. La început, alcoolul părea să fie o soluție rapidă pentru relaxare. Cu timpul, mi-am dat seama că nu rezolvă problema reală, ci doar o ascunde temporar."</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">4. Evită tonul robotic</h3>
+                        <p class="mb-2">Dacă răspunzi <span class="font-bold">prea perfect, fără ezitări</span>, psihologul poate suspecta că ai memorat răspunsurile.</p>
+                        <p class="mb-2">Exersează să vorbești <span class="font-bold">relaxat</span>, ca și cum ai explica unui prieten.</p>
+                    </div>
+                    
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Concluzie</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <span>Pregătirea este esențială, dar felul în care exprimi răspunsurile contează la fel de mult.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <span>Psihologii nu vor perfecțiune, ci sinceritate și reflecție autentică.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <span>Dacă vorbești natural, cu exemple reale și o exprimare flexibilă, vei evita orice suspiciune de răspuns mecanic.</span>
+                            </li>
+                        </ul>
+                        <p class="mt-4 font-bold text-center">Aplică aceste tehnici și vei trece cu succes interviul MPU!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zona principală -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Coloana stângă - Navigare și categorii -->
+            <div class="w-full md:w-1/3 mb-6 md:mb-0">
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Categorii</h2>
+                        <button id="showGuideButton" class="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full hover:bg-indigo-200 transition">
+                            Ghid
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm active" data-category="all">
+                            Toate
+                        </button>
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm" data-category="alcohol">
+                            Alcool
+                        </button>
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm" data-category="drugs">
+                            Droguri
+                        </button>
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm" data-category="traffic">
+                            Trafic
+                        </button>
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm" data-category="attitude">
+                            Atitudine
+                        </button>
+                        <button class="category-tab px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm" data-category="future">
+                            Viitor
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="searchInput" class="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Caută întrebări...">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Progresul tău</h2>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1 text-sm">
+                            <span>Întrebări vizualizate</span>
+                            <span id="answeredQuestions">0/20</span>
+                        </div>
+                        <div class="progress-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-sm text-gray-600">Înregistrate</p>
+                            <p id="recordedAnswers" class="font-semibold text-lg">0</p>
+                        </div>
+                        <div class="bg-blue-50 p-2 rounded-lg">
+                            <p class="text-sm text-gray-600">Regenerate</p>
+                            <p id="generatedAnswers" class="font-semibold text-lg">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Sfaturi utile</h2>
+                    <div class="space-y-3">
+                        <div class="tips-container pl-3">
+                            <p class="text-sm text-gray-700">Ia-ți timp să te gândești. O pauză scurtă înainte de a răspunde pare mai naturală.</p>
+                        </div>
+                        <div class="tips-container pl-3">
+                            <p class="text-sm text-gray-700">Folosește formulări precum "Am învățat că..." sau "Am experimentat..." în loc de "Trebuie să..."</p>
+                        </div>
+                        <div class="warning-container pl-3">
+                            <p class="text-sm text-gray-700">Evită să răspunzi prea rapid sau să folosești excesiv termeni tehnici.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coloana dreaptă - Lista de întrebări și detalii -->
+            <div class="w-full md:w-2/3">
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Întrebări</h2>
+                    
+                    <!-- Lista de întrebări -->
+                    <div id="questionList" class="question-list space-y-4">
+                        <!-- Întrebările vor fi adăugate dinamic prin JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Vizualizarea detaliată a unei întrebări -->
+                <div id="questionDetail" class="bg-white rounded-lg shadow-md p-6 hidden">
+                    <div class="mb-4">
+                        <button id="backToList" class="flex items-center text-indigo-600 hover:text-indigo-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Înapoi la listă
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <span id="questionCategory" class="inline-block px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800 mb-2">Categorie</span>
+                        <h3 id="questionTitle" class="text-xl font-bold text-gray-800 mb-3">Se încarcă întrebarea...</h3>
+                        <p id="questionDescription" class="text-gray-700 mb-4">Se încarcă descrierea...</p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold mb-2">La ce este atent examinatorul:</h4>
+                            <ul id="examinerFocus" class="list-disc list-inside text-gray-700 text-sm">
+                                <li>Se încarcă punctele de atenție...</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabs pentru diferite secțiuni -->
+                    <div class="mb-6 border-b border-gray-200">
+                        <ul class="flex flex-wrap -mb-px">
+                            <li class="mr-2">
+                                <button id="responseTab" class="inline-block py-2 px-4 text-blue-600 hover:text-blue-800 font-medium border-b-2 border-blue-600 active" onclick="switchTab('response')">
+                                    Răspunsuri
+                                </button>
+                            </li>
+                            <li class="mr-2">
+                                <button id="recordTab" class="inline-block py-2 px-4 text-gray-500 hover:text-gray-700 font-medium border-b-2 border-transparent" onclick="switchTab('record')">
+                                    Înregistrează-ți răspunsul
+                                </button>
+                            </li>
+                            <li class="mr-2">
+                                <button id="generateTab" class="inline-block py-2 px-4 text-gray-500 hover:text-gray-700 font-medium border-b-2 border-transparent" onclick="switchTab('generate')">
+                                    Generează răspuns nou
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Conținut Tab: Răspunsuri -->
+                    <div id="responseContent" class="tab-content">
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3">Răspuns model:</h4>
+                            <div id="sampleAnswer" class="bg-gray-50 p-4 rounded-lg mb-4 text-gray-700">
+                                Se încarcă răspunsul model...
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h4 class="font-semibold mb-2">Exemplu personal:</h4>
+                                <div id="personalExample" class="personal-example pl-4 py-2 text-gray-700 italic">
+                                    Se încarcă exemplul...
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold mb-2">La ce să fii atent:</h4>
+                                <ul id="answerTips" class="list-disc list-inside text-gray-700 text-sm">
+                                    <li>Se încarcă sfaturile...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conținut Tab: Înregistrare -->
+                    <div id="recordContent" class="tab-content hidden">
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3">Înregistrează răspunsul tău:</h4>
+                            <div class="flex items-center space-x-4">
+                                <button id="recordButton" class="record-button flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                    </svg>
+                                </button>
+                                <div>
+                                    <p id="recordingIndicator" class="text-sm text-gray-500 hidden">
+                                        <span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1 blinking"></span>
+                                        Înregistrare în curs...
+                                    </p>
+                                    <p id="recordingTime" class="text-sm font-mono">00:00</p>
+                                </div>
+                            </div>
+                            
+                            <div id="audioContainer" class="mt-4 hidden">
+                                <audio id="audioPlayer" controls class="audio-player"></audio>
+                                <div class="flex mt-3 space-x-2">
+                                    <button id="reRecordButton" class="px-3 py-1 text-sm rounded border border-gray-300 hover:bg-gray-100">
+                                        Înregistrează din nou
+                                    </button>
+                                    <button id="saveRecordingButton" class="px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700">
+                                        Salvează
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conținut Tab: Generare răspuns nou -->
+                    <div id="generateContent" class="tab-content hidden">
+                        <div class="mb-6">
+                            <h4 class="font-semibold mb-3">Generează un răspuns personalizat:</h4>
+                            <p class="text-gray-600 mb-4">Sistemul va crea un răspuns nou cu exemple personale detaliate și va compara cu răspunsul original pentru a evidenția îmbunătățirile.</p>
+                            
+                            <div class="mb-4">
+                                <label for="personalContext" class="block text-sm font-medium text-gray-700 mb-1">Adaugă detalii personale pentru contextualizare (opțional):</label>
+                                <textarea id="personalContext" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="De exemplu: Am 35 de ani, lucrez ca inginer, sunt căsătorit cu doi copii, etc."></textarea>
+                            </div>
+                            
+                            <button id="generateButton" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center">
+                                <span id="generateButtonText">Generează răspuns nou</span>
+                                <span id="generateSpinner" class="ml-2 loading-spinner hidden"></span>
+                            </button>
+                            
+                            <div id="generatedResponseContainer" class="mt-6 hidden">
+                                <div class="border-t border-b border-gray-200 py-4 mb-4">
+                                    <h4 class="font-semibold mb-3">Răspuns nou generat:</h4>
+                                    <div id="generatedResponse" class="bg-gray-50 p-4 rounded-lg mb-4 text-gray-700">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h4 class="font-semibold mb-3">Comparație cu răspunsul original:</h4>
+                                    <div id="responseDiff" class="bg-gray-50 p-4 rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h4 class="font-semibold mb-3">Îmbunătățiri:</h4>
+                                    <div id="improvements" class="bg-green-50 p-4 rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end mt-4">
+                                    <button id="saveGeneratedButton" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                        Salvează răspunsul generat
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button id="nextQuestionButton" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            Următoarea întrebare
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Baza de date cu întrebări și răspunsuri MPU
+        const questions = [
+            {
+                id: 1,
+                category: "alcohol",
+                title: "De ce ați consumat alcool?",
+                description: "Această întrebare urmărește să evalueze capacitatea ta de reflecție asupra motivelor consumului de alcool.",
+                examinerFocus: [
+                    "Onestitatea și înțelegerea propriilor motivații",
+                    "Capacitatea de autoreflecție",
+                    "Înțelegerea factorilor personali declanșatori"
+                ],
+                sampleAnswer: "În trecut, am consumat alcool pentru că voiam să gestionez emoțiile negative și stresul. Nu am învățat să fac față problemelor în alte moduri, iar alcoolul părea o soluție rapidă. De asemenea, presiunea socială din cercul meu de prieteni a jucat un rol, deoarece alcoolul era prezent la fiecare întâlnire.",
+                personalExample: "Acum doi ani, când am avut probleme în relație și eram sub presiune la serviciu, obișnuiam să beau bere seara pentru a mă relaxa. Ce a început cu o bere a devenit rapid trei sau patru, pentru că am observat că tensiunea scădea. Abia mai târziu am înțeles că doar amânam problemele, fără să le rezolv.",
+                answerTips: [
+                    "Arată că înțelegi motivele tale, fără să te justifici",
+                    "Evită scuze precum 'toți făceau asta'",
+                    "Explică procesul cum s-a dezvoltat consumul",
+                    "Arată că înțelegi acum de ce nu a fost o soluție bună"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 2,
+                category: "alcohol",
+                title: "Cum ați recunoscut că consumul dumneavoastră de alcool este problematic?",
+                description: "Examinatorul vrea să știe dacă ai capacitatea de a recunoaște tiparele problematice de comportament și de a le evalua.",
+                examinerFocus: [
+                    "Capacitatea de auto-observare critică",
+                    "Recunoașterea semnelor de avertizare",
+                    "Acceptarea responsabilității personale"
+                ],
+                sampleAnswer: "Am observat treptat că consumul meu de alcool îmi afectează negativ viața. A început cu semne mici - aveam nevoie de mai mult alcool pentru același efect și am anulat întâlniri pentru a bea. Realizarea clară a venit când, deși băusem alcool cu o seară înainte, am condus mașina și am pierdut controlul vehiculului.",
+                personalExample: "Punctul de cotitură pentru mine a fost când am ratat o prezentare importantă la serviciu pentru că băusem prea mult cu o seară înainte și nu puteam gândi clar. Șeful meu m-a confruntat, și în acel moment mi-am dat seama că consumul meu de alcool nu îmi afecta doar viața personală, ci și viitorul profesional. La asta s-au adăugat comentariile îngrijorate ale familiei mele, pe care le-am ignorat până atunci.",
+                answerTips: [
+                    "Descrie un moment specific de 'revelație'",
+                    "Explică ce consecințe te-au făcut să reflectezi",
+                    "Arată că acum recunoști retrospectiv semnele de avertizare",
+                    "Menționează atât evenimente externe, cât și revelații interne"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 3,
+                category: "alcohol",
+                title: "Cum vă asigurați că nu veți recădea?",
+                description: "Această întrebare verifică strategiile tale de prevenire a recăderilor și conștientizarea situațiilor de risc.",
+                examinerFocus: [
+                    "Strategii concrete de prevenire",
+                    "Conștientizarea factorilor personali de risc",
+                    "Evaluarea realistă a propriilor capacități"
+                ],
+                sampleAnswer: "Pentru a evita recăderile, am dezvoltat mai multe strategii. Evit conștient situațiile în care obișnuiam să beau mult, cum ar fi anumite baruri sau întâlniri. Am găsit noi modalități de a face față stresului, precum sportul și meditația. În plus, mi-am construit un mediu social de sprijin și vorbesc deschis despre provocările mele.",
+                personalExample: "După ce am renunțat la băut, am observat că petrecerile de la birou erau deosebit de dificile pentru mine. De aceea, am stabilit cu cel mai bun prieten al meu să mă însoțească la astfel de evenimente și să bem împreună băuturi non-alcoolice. De asemenea, alerg de trei ori pe săptămână, ceea ce mă ajută să reduc stresul, și am instalat o aplicație care contorizează zilele fără alcool, ceea ce mă motivează suplimentar.",
+                answerTips: [
+                    "Numește strategii specifice, personale, nu doar concepte generale",
+                    "Explică cum gestionezi situațiile concrete de risc",
+                    "Demonstrează conștientizarea factorilor declanșatori și cum reacționezi la ei",
+                    "Subliniază schimbările pozitive din viața ta prin abstinență"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 4,
+                category: "alcohol",
+                title: "Ce ați învățat din consumul de alcool?",
+                description: "Examinatorul dorește să afle dacă ai putut trage concluzii pozitive din experiențele tale.",
+                examinerFocus: [
+                    "Capacitatea de a învăța din greșeli",
+                    "Creșterea personală și dezvoltarea",
+                    "Înțelegerea consecințelor propriilor acțiuni"
+                ],
+                sampleAnswer: "Din experiența mea cu alcoolul am învățat multe despre mine. Am realizat că aveam tendința să evit problemele în loc să le abordez direct. Am învățat că 'soluțiile' pe termen scurt, cum ar fi alcoolul, creează mai multe probleme pe termen lung. De asemenea, am înțeles valoarea prieteniilor autentice - oameni care te susțin și în momentele dificile, fără ca alcoolul să fie implicat.",
+                personalExample: "Când mi-am pierdut permisul de conducere din cauza conducerii în stare de ebrietate, inițial a fost un dezastru pentru mine. Brusc a trebuit să folosesc transportul public și să depind de ajutorul altora. Această dependență m-a făcut mai umil și mi-a arătat cât de mult comportamentul meu poate afecta și alte persoane. Am învățat, de asemenea, că sunt mai puternic decât credeam - depășirea problemelor mele cu alcoolul mi-a dat încredere că pot face față și altor provocări.",
+                answerTips: [
+                    "Evidențiază efectele pozitive de învățare, fără a justifica consumul de alcool",
+                    "Arată cum această experiență a dus la creștere personală",
+                    "Explică cum ți s-au schimbat valorile și prioritățile",
+                    "Prezintă cum acest nou nivel de conștientizare te va ajuta în viitor"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 5,
+                category: "drugs",
+                title: "De ce ați consumat droguri?",
+                description: "Această întrebare examinează înțelegerea motivelor personale care au dus la consumul de droguri.",
+                examinerFocus: [
+                    "Sinceritatea privind motivele consumului",
+                    "Profunzimea autoreflecției",
+                    "Înțelegerea factorilor psihologici și sociali"
+                ],
+                sampleAnswer: "Am experimentat cu droguri dintr-un amestec de curiozitate, dorința de apartenență la grup și căutarea unei evadări din problemele de atunci. La început a fost atracția interzisului și posibilitatea de a 'evada' din cotidian. Cu timpul, consumul a devenit un obicei pentru a face față stresului și emoțiilor negative.",
+                personalExample: "După bacalaureat am trecut printr-o perioadă de dezorientare. Prietenii mei erau deja la facultate, în timp ce eu încă nu-mi găsisem direcția. La o petrecere am încercat canabis pentru că voiam să fac parte din grup și mă atrăgea efectul relaxant. Ce a început ca un consum ocazional în weekend s-a transformat într-un ritual regulat pentru a-mi atenua nesiguranța și teama de viitor. Abia mai târziu am realizat că doar pierdeam timp și nu rezolvam problemele, ci le amplificam.",
+                answerTips: [
+                    "Vorbește deschis despre motivațiile tale, fără să le înfrumusețezi",
+                    "Arată că înțelegi cum s-a dezvoltat consumul",
+                    "Evită să dai vina pe alții",
+                    "Explică legătura dintre situația ta de viață și consum"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 6,
+                category: "drugs",
+                title: "Cum a afectat consumul de droguri modul dumneavoastră de a conduce?",
+                description: "Această întrebare vizează conștientizarea efectelor drogurilor asupra capacității de a conduce.",
+                examinerFocus: [
+                    "Înțelegerea realistă a afectărilor",
+                    "Recunoașterea pericolului în trafic",
+                    "Înțelegerea incompatibilității dintre consum și condus"
+                ],
+                sampleAnswer: "Retrospectiv, îmi dau seama că consumul de droguri mi-a afectat negativ condusul în mai multe privințe, deși atunci nu voiam să recunosc. Timpul meu de reacție era mai lent, concentrarea redusă și percepția riscurilor distorsionată. Chiar și când nu consumam imediat înainte de a conduce, efectele reziduale precum oboseala sau lipsa de concentrare erau încă prezente.",
+                personalExample: "Îmi amintesc de o situație când am consumat canabis seara și am condus spre serviciu a doua zi dimineața. Credeam că efectele dispăruseră de mult. La o intersecție, însă, am ratat complet un biciclist care se apropia și a trebuit să frânez brusc. Deși nu s-a întâmplat nimic, acest moment m-a speriat. Mi-am dat seama că creierul meu încă nu funcționa corect - aveam dificultăți să percep mai multe lucruri simultan și să reacționez rapid. Această experiență mi-a deschis ochii cu privire la cât de periculos poate fi și 'restul' de droguri din organism pentru condus.",
+                answerTips: [
+                    "Descrie afectări concrete în loc de declarații generale",
+                    "Exemplifică potențialul de pericol prin experiențe personale",
+                    "Arată înțelegerea efectelor pe termen lung și reziduale",
+                    "Subliniază incompatibilitatea dintre consumul de droguri și condusul în siguranță"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 7,
+                category: "drugs",
+                title: "Cum vă asigurați că nu veți mai consuma droguri în viitor?",
+                description: "Examinatorul dorește să afle strategiile tale concrete pentru menținerea abstinenței.",
+                examinerFocus: [
+                    "Strategii concrete și realizabile",
+                    "Gestionarea situațiilor de risc",
+                    "Planificare și angajament pe termen lung"
+                ],
+                sampleAnswer: "Pentru a rămâne fără droguri, am dezvoltat mai multe strategii. Mi-am schimbat complet anturajul și evit contactul cu persoanele care încă consumă. Am dezvoltat noi interese și hobby-uri care îmi oferă experiențe pozitive. Pentru stres sau emoții negative, folosesc strategii sănătoase de gestionare precum sportul sau discuțiile cu prietenii. De asemenea, particip regulat la un grup de sprijin care îmi oferă stabilitate.",
+                personalExample: "După terapie, am realizat că plictiseala și anumiți prieteni erau factori declanșatori pentru consumul meu. De aceea, mi-am creat un program zilnic structurat și particip de două ori pe săptămână la un curs de arte marțiale, care îmi oferă atât activitate fizică, cât și un nou mediu social. Am discutat deschis cu familia mea despre trecutul meu și i-am rugat să mă sprijine. Când simt că revin vechile tipare de gândire, îl sun imediat pe prietenul meu Mihai, care este și el abstinent și mă înțelege. Cu aceste măsuri concrete, am reușit să trăiesc complet fără droguri de 18 luni.",
+                answerTips: [
+                    "Menționează măsuri specifice, personale, nu doar declarații de intenție generale",
+                    "Explică cum gestionezi factorii declanșatori și situațiile de risc",
+                    "Descrie atât strategii pe termen scurt, cât și pe termen lung",
+                    "Arată că știi unde să cauți sprijin și folosești aceste resurse"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 8,
+                category: "traffic",
+                title: "De ce este important să respectați limitele de viteză?",
+                description: "Această întrebare verifică înțelegerea ta privind siguranța rutieră și disponibilitatea de a respecta regulile.",
+                examinerFocus: [
+                    "Înțelegerea aspectelor de siguranță",
+                    "Conștientizarea propriei responsabilități",
+                    "Recunoașterea funcției de protecție a regulilor de circulație"
+                ],
+                sampleAnswer: "Limitele de viteză sunt importante din mai multe motive: Ele cresc siguranța traficului, deoarece viteza mai mare prelungește distanța de frânare și scurtează timpul de reacție. În caz de accident, consecințele sunt de obicei mai grave la viteze mai mari. În plus, vitezele mai mici reduc zgomotul și poluarea și contribuie la un flux de trafic mai bun.",
+                personalExample: "În trecut, consideram adesea limitele de viteză ca fiind agasante și le depășeam, mai ales pe rutele familiare. O experiență decisivă pentru mine a fost când conduceam cu viteză prea mare pe un drum de țară și brusc a apărut un căprior în fața mea. În ciuda frânării imediate, abia am reușit să-l evit și aproape am ieșit de pe drum. După aceea, mi-am dat seama cât de repede pot apărea situații neprevăzute și cât de importantă este distanța suplimentară de reacție și frânare pe care o câștigi prin respectarea vitezei. De atunci respect strict limitele și constat că astfel conduc mult mai relaxat și mai sigur.",
+                answerTips: [
+                    "Evidențiază atât aspectele de siguranță, cât și beneficiile sociale",
+                    "Folosește un exemplu personal care arată schimbarea ta de atitudine",
+                    "Evită impresia că respecți limitele de viteză doar pentru a evita amenzile",
+                    "Demonstrează înțelegerea corelațiilor științifice (distanța de frânare, energia de impact)"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 9,
+                category: "traffic",
+                title: "Cum evaluați comportamentul dumneavoastră la volan înainte de incident?",
+                description: "Examinatorul dorește să evalueze capacitatea ta de autoreflecție critică privind comportamentul tău anterior în trafic.",
+                examinerFocus: [
+                    "Sinceritatea în autoevaluare",
+                    "Identificarea tiparelor problematice de comportament",
+                    "Perspectivă nuanțată asupra propriului comportament la volan"
+                ],
+                sampleAnswer: "Privind retrospectiv, aș caracteriza comportamentul meu anterior la volan ca fiind riscant și adesea inadecvat. Păstram distanțe prea mici, eram nerăbdător și depășeam limitele de viteză. Deși eram un șofer bun din punct de vedere tehnic, subestimam pericolele și îmi asumam prea multe riscuri. În plus, nu luam suficient în serios efectele oboselii și ale distragerii atenției.",
+                personalExample: "Înainte de suspendarea permisului meu, eram convins că sunt un șofer peste medie. Depășeam frecvent limitele de viteză, mai ales pe autostradă, unde conduceam regulat cu 160-180 km/h, deși limita era de 120. Folosesm frecvent telefonul în timp ce conduceam, pentru a citi mesaje sau pentru a schimba muzica. O dată, pe un drum național, aproape am avut un accident din spate pentru că eram distras, dar nici măcar asta nu m-a făcut să-mi schimb gândirea. Mă consideram invincibil și ignoram complet riscurile comportamentului meu, până la incidentul decisiv.",
+                answerTips: [
+                    "Fii sincer despre comportamentele problematice, fără să cauți scuze",
+                    "Arată că ți-ai analizat critic comportamentul anterior",
+                    "Oferă exemple concrete de comportament riscant",
+                    "Explică și mentalitatea de atunci și de ce era problematică"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 10,
+                category: "traffic",
+                title: "Cum s-a schimbat atitudinea dumneavoastră față de condus de atunci?",
+                description: "Această întrebare vizează dezvoltarea ta personală și modificarea atitudinii tale față de condus.",
+                examinerFocus: [
+                    "Prezentarea credibilă a unei schimbări de atitudine",
+                    "Consecințe pentru comportamentul propriu",
+                    "Sustenabilitatea schimbării"
+                ],
+                sampleAnswer: "Atitudinea mea față de condus s-a schimbat fundamental. Acum consider condusul ca pe o responsabilitate, nu ca pe o oportunitate de a mă dovedi sau de a-mi elibera stresul. Înțeleg că nu doar siguranța mea, ci și cea a tuturor participanților la trafic depinde de comportamentul meu. Permisul de conducere nu mai este un drept de la sine înțeles pentru mine, ci un privilegiu care necesită responsabilitate.",
+                personalExample: "După accidentul meu, am trăit câteva luni fără mașină și am depins de transportul public. Această experiență mi-a arătat cât de mult consideram libertatea de a conduce ca fiind de la sine înțeleasă. Când am putut conduce din nou, eram inițial foarte precaut și chiar anxios. Cu timpul, am dezvoltat un nou stil de conducere, mai defensiv și mai anticipativ. Acum îmi planific mai mult timp pentru deplasările mele, astfel încât să nu mă grăbesc. Când văd astăzi cum alți șoferi depășesc riscant sau se apropie periculos, abia pot crede că am condus la fel. Aceste comportamente mi se par acum complet iraționale și iresponsabile.",
+                answerTips: [
+                    "Descrie schimbări concrete de comportament, nu doar intenții",
+                    "Arată că înțelegi consecințele comportamentului tău anterior",
+                    "Explică cum ți s-au schimbat valorile și prioritățile",
+                    "Evită impresia că doar răspunzi ce se așteaptă de la tine"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 11,
+                category: "traffic",
+                title: "Cum reacționați astăzi când sunteți sub presiunea timpului și totuși trebuie să conduceți?",
+                description: "Examinatorul dorește să știe dacă ai dezvoltat strategii concrete pentru situații critice.",
+                examinerFocus: [
+                    "Abordări practice pentru situații cotidiene",
+                    "Capacitatea de gestionare a stresului",
+                    "Prioritizarea siguranței față de alți factori"
+                ],
+                sampleAnswer: "Când sunt astăzi sub presiunea timpului, strategia mea începe chiar înainte de a conduce. În principiu, calculez mai mult timp tampon decât înainte. Dacă totuși ajung în criză de timp, îmi amintesc în mod conștient că siguranța este mai importantă decât punctualitatea. Anunț persoana care așteaptă despre întârzierea mea, în loc să conduc riscant. În timpul condusului, folosesc tehnici de relaxare precum respirația conștientă pentru a reduce stresul.",
+                personalExample: "Săptămâna trecută aveam un interviu important și am rămas blocat în trafic. În trecut, într-o astfel de situație aș fi înjurat, aș fi presat și aș fi depășit riscant la fiecare oportunitate. De data aceasta, am respirat adânc, am sunat compania și am anunțat întârzierea mea. M-am concentrat apoi conștient pe condus, în loc să mă enervez din cauza blocajului. Când am ajuns, eram cu 15 minute întârziat, dar calm și concentrat - iar interviul a decurs bine oricum. Această experiență mi-a confirmat că noua mea abordare nu este doar mai sigură, ci în cele din urmă și mai de succes.",
+                answerTips: [
+                    "Descrie strategii concrete și realiste",
+                    "Arată că siguranța este prioritatea ta",
+                    "Explică cum faci față aspectului emoțional (stres, frustrare)",
+                    "Demonstrează planificare anticipată și responsabilitate"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 12,
+                category: "attitude",
+                title: "Ce înseamnă pentru dumneavoastră un comportament responsabil în trafic?",
+                description: "Această întrebare examinează înțelegerea ta despre responsabilitate și comportament sigur în trafic.",
+                examinerFocus: [
+                    "Înțelegere cuprinzătoare a responsabilității",
+                    "Luarea în considerare a celorlalți participanți la trafic",
+                    "Conștientizarea propriului rol în siguranța traficului"
+                ],
+                sampleAnswer: "Un comportament responsabil în trafic înseamnă pentru mine să promovez activ siguranța tuturor participanților. Aceasta include respectarea regulilor de circulație, dar merge dincolo de asta: înseamnă să conduci anticipativ, să-ți evaluezi realist abilitățile și să iei în considerare pe ceilalți. Aceasta include, de asemenea, să conduci doar treaz și odihnit și să eviți distragerea atenției.",
+                personalExample: "Îmi amintesc de o situație din iarna trecută: ningea puternic și drumurile erau alunecoase. Trebuia să ajung la o sărbătoare de familie importantă și eram deja în întârziere. În trecut, aș fi încercat să conduc rapid în ciuda condițiilor. De data aceasta am sunat familia, am explicat că voi întârzia, și am condus cu deosebită precauție - cu viteză adaptată, distanță suficientă și concentrare maximă. Pe drum, am văzut mai multe accidente și am fost recunoscător pentru decizia mea. Responsabilitate înseamnă pentru mine astăzi să iau astfel de decizii în mod conștient, chiar dacă uneori sunt incomode.",
+                answerTips: [
+                    "Mergi dincolo de evidentul 'respectă regulile'",
+                    "Arată înțelegere pentru responsabilitatea față de ceilalți",
+                    "Conectează principii generale cu comportamente concrete",
+                    "Subliniază importanța autoreflecției și a deciziilor conștiente"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 13,
+                category: "attitude",
+                title: "Cum tratați greșelile altor participanți la trafic?",
+                description: "Examinatorul dorește să evalueze capacitatea ta de autocontrol și înțelegerea pentru alți participanți la trafic.",
+                examinerFocus: [
+                    "Autocontrol emoțional",
+                    "Conducere defensivă",
+                    "Empatie și înțelegere"
+                ],
+                sampleAnswer: "Tratez greșelile altor participanți la trafic mult mai calm decât înainte. Înțeleg că oricine poate greși și încerc să conduc defensiv pentru a fi pregătit pentru situații neașteptate. În loc să mă enervez sau să claxonez, mă concentrez pe reacția sigură. Încerc, de asemenea, să învăț din greșelile altora și să reflectez dacă aș putea face greșeli similare în situații similare.",
+                personalExample: "Săptămâna trecută, o mașină mi-a tăiat calea la un viraj. În trecut, aș fi claxonat, înjurat și poate chiar aș fi încercat să-i arăt șoferului cât de supărat eram. De data aceasta, am frânat pur și simplu, am respirat adânc și m-am gândit: 'Bine că am fost atent și am păstrat o distanță de siguranță suficientă.' M-am întrebat apoi dacă șoferul m-a văzut poate în unghiul mort și dacă uneori trec și eu cu vederea alți participanți la trafic. Acest mod de gândire mă ajută să rămân calm și să mă concentrez pe esențial - să ajung în siguranță.",
+                answerTips: [
+                    "Arată că poți controla reacțiile emoționale",
+                    "Subliniază importanța condusului defensiv",
+                    "Demonstrează empatie și înțelegere pentru greșelile altora",
+                    "Explică cum înveți din astfel de situații"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 14,
+                category: "attitude",
+                title: "Ce rol joacă mașina în viața dumneavoastră astăzi?",
+                description: "Această întrebare vizează atitudinea ta modificată față de importanța condusului.",
+                examinerFocus: [
+                    "Relație realistă cu condusul",
+                    "Renunțarea la semnificația emoțională exagerată",
+                    "Perspectivă funcțională în loc de una orientată spre prestigiu"
+                ],
+                sampleAnswer: "Mașina joacă astăzi un rol practic în viața mea. O văd ca pe un mijloc de transport util, nu ca pe un simbol de status sau un mijloc de a-mi exprima personalitatea. Apreciez mobilitatea și independența pe care mi-o oferă, dar sunt, de asemenea, conștient de responsabilitatea care vine cu ea. Folosesc mașina mai conștient și o combin cu alte mijloace de transport atunci când este mai rezonabil.",
+                personalExample: "În trecut, mașina mea era un simbol de status important pentru mine și mă defineam puternic prin ea. Am investit mulți bani în tuning și accesorii și mă simțeam inconfortabil când cineva avea o mașină 'mai bună'. După suspendarea permisului meu, a trebuit să folosesc transportul public timp de șase luni. Această perioadă mi-a schimbat perspectiva. Astăzi conduc o mașină mică, practică, care este fiabilă și economică. Folosesc mașina în principal pentru drumuri care ar fi complicate cu transportul public, cum ar fi cumpărăturile săptămânale sau vizitele la părinții mei de la țară. Plăcerea de a conduce a rămas, dar acum constă în condusul relaxat, sigur, nu în testarea limitelor de performanță.",
+                answerTips: [
+                    "Prezintă o atitudine echilibrată, practică față de mașină",
+                    "Explică cum ți s-au schimbat prioritățile",
+                    "Evită să prezinți mașina ca fiind foarte importantă emoțional",
+                    "Subliniază abordarea responsabilă a mobilității"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 15,
+                category: "attitude",
+                title: "Cum ați reacționa dacă un prieten ar vrea să conducă sub influența alcoolului?",
+                description: "Examinatorul dorește să știe dacă ești pregătit să-ți asumi responsabilitatea și să intervii în situații sociale dificile.",
+                examinerFocus: [
+                    "Disponibilitatea de a interveni în caz de comportament periculos",
+                    "Rezistența la presiunea socială",
+                    "Abordări creative pentru situații conflictuale"
+                ],
+                sampleAnswer: "Dacă un prieten ar vrea să conducă sub influența alcoolului, aș interveni cu siguranță. Aș comunica clar și ferm că nu pot permite asta - din grijă pentru el și pentru ceilalți participanți la trafic. Aș oferi alternative practice, cum ar fi chemarea unui taxi, conducerea eu însumi dacă sunt treaz, sau găsirea unei opțiuni de cazare. Dacă este necesar, aș lua chiar cheile mașinii sau aș cere ajutorul altor prieteni.",
+                personalExample: "La o aniversare acum câteva luni, un bun prieten voia să conducă acasă în ciuda faptului că băuse mai multe beri. Când l-am abordat, a spus că suportă bine alcoolul și că știe drumul și în somn. În loc să discut, i-am oferit să doarmă la mine sau să-l conduc eu acasă. Când a refuzat, am devenit mai direct și i-am spus: 'Martin, nu te pot lăsa să conduci. Dacă ți se întâmplă ceva sau rănești pe cineva, nu mi-aș putea ierta niciodată.' I-am arătat o aplicație cu amenzile și pedepsele actuale pentru conducerea în stare de ebrietate și i-am amintit că are nevoie de permis pentru munca lui. În cele din urmă, a fost de acord să doarmă la mine, iar a doua zi mi-a mulțumit chiar pentru insistența mea.",
+                answerTips: [
+                    "Arată disponibilitate clară de a interveni, fără a moraliza",
+                    "Prezintă soluții concrete, practice",
+                    "Explică cum ai face față rezistenței sau refuzului",
+                    "Subliniază atât grija pentru prieten, cât și pentru ceilalți participanți la trafic"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 16,
+                category: "future",
+                title: "Ce strategii ați dezvoltat pentru a participa în siguranță la trafic în viitor?",
+                description: "Această întrebare vizează planurile și măsurile tale concrete pentru condusul în siguranță în viitor.",
+                examinerFocus: [
+                    "Strategii concrete, practice",
+                    "Planificare anticipată pentru situații critice",
+                    "Sustenabilitatea schimbărilor"
+                ],
+                sampleAnswer: "Am dezvoltat mai multe strategii pentru a participa în siguranță la trafic. Acum îmi planific întotdeauna călătoriile cu suficient timp tampon pentru a evita stresul. Înainte de călătorii lungi, mă asigur că sunt odihnit și fac pauze regulate. Îmi țin telefonul departe de mine în timpul condusului și folosesc funcția hands-free. De asemenea, îmi reflectez regulat comportamentul la volan și mă întreb unde mă pot îmbunătăți.",
+                personalExample: "Un exemplu concret: conduc des la întâlniri pentru serviciu. În trecut, calculam timpul de călătorie foarte strâns și apoi eram stresat când intram într-un blocaj de trafic. Acum planific pentru o călătorie de 30 de minute întotdeauna cel puțin 45 de minute. Mi-am format, de asemenea, obiceiul de a-mi pune telefonul în torpedo și de a configura aplicația de navigație înainte de a pleca. Când observ că sunt obosit, mă opresc imediat și fac o scurtă plimbare sau beau o cafea. O dată pe lună reflectez conștient asupra comportamentului meu la volan și mă gândesc dacă aș fi putut reacționa mai bine în anumite situații. Această combinație de planificare anticipată, ajutoare tehnice și autoreflecție a făcut condusul meu mult mai sigur.",
+                answerTips: [
+                    "Numește mai multe strategii concrete, practice pentru viața de zi cu zi",
+                    "Arată cum tratezi factorii de risc tipici (stres, oboseală, distragere)",
+                    "Explică cum asiguri sustenabilitatea strategiilor tale",
+                    "Conectează strategiile tale cu factorii tăi personali de risc"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 17,
+                category: "future",
+                title: "Cum ați face față unei situații în care sunteți presat să consumați alcool?",
+                description: "Examinatorul dorește să evalueze capacitatea ta de a rezista presiunii sociale și de a-ți respecta hotărârile.",
+                examinerFocus: [
+                    "Fermitate în fața presiunii sociale",
+                    "Strategii concrete de gestionare",
+                    "Încredere în sine în comunicare"
+                ],
+                sampleAnswer: "Într-o situație în care sunt presat să beau alcool, aș comunica clar și încrezător că nu beau. Am pregătite câteva răspunsuri politicoase, dar ferme, și le exersez regulat. Redirecționez conversația spre alte subiecte sau propun activități alternative. Dacă presiunea continuă, sunt pregătit să părăsesc situația, deoarece sănătatea și siguranța mea au prioritate.",
+                personalExample: "La nunta unui coleg luna trecută, s-a servit șampanie pentru toast. Când am refuzat, gazda a întrebat de mai multe ori de ce nu vreau să sărbătoresc. În loc să mă justific sau să mă simt inconfortabil, am spus prietenos dar ferm: 'Nu mai beau alcool, dar mă bucur să ciocnesc cu un suc de portocale.' Când a insistat în continuare, am explicat pe scurt: 'Am luat o decizie conștientă să nu mai beau alcool și mă simt foarte bine cu asta.' Apoi am schimbat subiectul și l-am întrebat despre planurile lui de lună de miere. Momentul a trecut repede și am putut să mă bucur de seară fără presiune suplimentară. După această experiență, mă simt și mai încrezător să rămân ferm în astfel de situații.",
+                answerTips: [
+                    "Descrie formulări concrete pe care le-ai folosi",
+                    "Arată că te pregătești pentru astfel de situații",
+                    "Explică cum echilibrezi între refuzul politicos și trasarea clară a limitelor",
+                    "Subliniază hotărârea ta de a-ți respecta deciziile"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 18,
+                category: "future",
+                title: "Ce ați învățat din această experiență pentru viața dumneavoastră viitoare?",
+                description: "Această întrebare deschisă vizează capacitatea ta de autoreflecție și creștere personală.",
+                examinerFocus: [
+                    "Profunzimea autoreflecției",
+                    "Procesarea pozitivă a experiențelor negative",
+                    "Capacitatea de a trage învățăminte pentru viitor"
+                ],
+                sampleAnswer: "Această experiență m-a marcat în multe privințe. Am învățat că acțiunile mele au consecințe care depășesc cu mult propria persoană. Înțeleg acum cât de importante sunt autoreflecția și capacitatea de schimbare. Am realizat, de asemenea, că trebuie să-mi asum responsabilitatea pentru viața mea, în loc să învinovățesc circumstanțele externe sau alte persoane. Aceste lecții mă ajută nu doar în trafic, ci în toate domeniile vieții.",
+                personalExample: "Pierderea permisului de conducere și întregul proces MPU au fost inițial o mare criză pentru mine. M-am simțit ca un ratat și eram furios - pe sistem, dar și pe mine însumi. Cu timpul, însă, am început să văd situația diferit. Mi-am dat seama că comportamentul meu a fost periculos și că am avut mare noroc că nu s-a întâmplat ceva mai grav. Participarea la terapia de trafic m-a ajutat să-mi îmbunătățesc controlul impulsurilor și să fac față mai bine stresului. Aceste abilități le folosesc astăzi și în profesia mea și în relații. Ironic, această experiență dureroasă m-a ajutat să devin nu doar un șofer mai bun, ci și o persoană mai echilibrată, mai reflexivă. Acum sunt recunoscător pentru această lecție, deși mi-aș fi dorit să o învăț pe o cale mai puțin dificilă.",
+                answerTips: [
+                    "Arată reflecție autentică în loc de răspunsuri superficiale",
+                    "Evidențiază cum ai putut folosi experiențe negative în mod pozitiv",
+                    "Explică cum ți s-au schimbat valorile și prioritățile",
+                    "Conectează experiența ta de învățare cu schimbări concrete în viața ta"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 19,
+                category: "future",
+                title: "Cum veți reacționa într-o situație stresantă în trafic?",
+                description: "Examinatorul dorește să evalueze strategiile tale de gestionare a stresului în trafic.",
+                examinerFocus: [
+                    "Strategii concrete de gestionare a stresului",
+                    "Capacitatea de reglare emoțională",
+                    "Prioritatea siguranței traficului chiar și sub stres"
+                ],
+                sampleAnswer: "În situații stresante de trafic, primul lucru pe care-l fac este să respir adânc în mod conștient pentru a-mi reduce excitația. Îmi amintesc activ că siguranța este mai importantă decât viteza sau impunerea presupusului meu drept. Mă concentrez pe rezolvarea problemei, în loc să mă enervez pe alți participanți la trafic. În caz de stres continuu, îmi iau o scurtă pauză, dacă este posibil, oprindu-mă într-un loc sigur.",
+                personalExample: "Săptămâna trecută, în drum spre o întâlnire importantă, am intrat într-un blocaj de trafic neașteptat. În trecut, aș fi apăsat claxonul, aș fi înjurat și aș fi încercat cumva să înaintez mai repede. De data aceasta, am simțit stresul care apărea, dar am aplicat imediat noile mele strategii: am respirat adânc, am dat radioul mai încet și mi-am spus conștient: 'Este ceea ce este - stresul nu face situația mai bună.' Apoi am informat persoana cu care urma să mă întâlnesc despre întârzierea probabilă. Astfel am putut să mă relaxez și să conduc concentrat. Când blocajul s-a rezolvat, am rămas la o viteză moderată, în loc să încerc să recuperez timpul pierdut conducând prea repede. Am ajuns cu 15 minute întârziere, dar calm și concentrat - și astfel am fost mult mai prezent la întâlnire.",
+                answerTips: [
+                    "Descrie tehnici specifice, practice de calmare",
+                    "Arată că îți cunoști prioritățile (siguranța înaintea vitezei)",
+                    "Explică diferența dintre reacțiile tale anterioare și cele actuale",
+                    "Subliniază importanța acțiunilor anticipative pentru evitarea stresului"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            },
+            {
+                id: 20,
+                category: "future",
+                title: "Cum vă asigurați că vă mențineți schimbările pozitive pe termen lung?",
+                description: "Această întrebare vizează strategiile tale pentru schimbarea durabilă a comportamentului.",
+                examinerFocus: [
+                    "Strategii realiste pe termen lung",
+                    "Conștientizarea potențialelor pericole de recădere",
+                    "Auto-monitorizare și îmbunătățire continuă"
+                ],
+                sampleAnswer: "Pentru a-mi menține schimbările pozitive pe termen lung, lucrez cu mai multe strategii. Îmi reflectez regulat comportamentul și verific dacă rămân fidel intențiilor mele. Mi-am creat un mediu social de sprijin care încurajează noile mele obiceiuri. Îmi amintesc activ de consecințele negative ale comportamentului meu anterior și de beneficiile noului meu stil de viață. În plus, planific conștient cum voi face față situațiilor de risc.",
+                personalExample: "În fiecare duminică îmi iau aproximativ 15 minute pentru a reflecta asupra săptămânii trecute: Cum a fost comportamentul meu la volan? Au existat situații în care am recăzut în vechile tipare? Ce m-a ajutat să rămân răbdător și să conduc în siguranță? Țin un mic jurnal în care notez aceste reflecții. În plus, am stabilit cu cel mai bun prieten al meu să ne abordăm reciproc atunci când unul dintre noi arată un comportament riscant. Acum un an, am pus o fotografie a mașinii mele avariate ca fundal pe telefonul meu - un memento tăcut a ceea ce este în joc. La călătorii lungi, planific conștient pauze și am întotdeauna apă și o gustare mică cu mine, pentru a nu deveni obosit sau neatent. Această combinație de autoreflecție, sprijin social și măsuri practice mă ajută să rămân fidel noilor mele obiceiuri, chiar și în situații dificile.",
+                answerTips: [
+                    "Descrie rutine concrete de auto-verificare",
+                    "Arată conștientizarea factorilor personali de risc și a contramăsurilor",
+                    "Explică cum implici mediul tău social",
+                    "Subliniază caracterul proactiv al strategiilor tale"
+                ],
+                generatedAnswer: null,
+                generatedExample: null,
+                improvements: null
+            }
+        ];
+
+        // Variabile pentru funcționalitatea aplicației
+        let currentQuestion = null;
+        let currentCategory = 'all';
+        let recordedAnswers = {};
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordingTimer = null;
+        let recordingSeconds = 0;
+        let userRatings = {};
+        let answeredQuestions = new Set();
+        let generatedAnswers = {};
+
+        // Inițializare elemente DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeneri pentru filele de categorii
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    currentCategory = category;
+                    
+                    // Evidențierea filei active
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filtrare și afișare întrebări
+                    showQuestionsByCategory(category);
+                });
+            });
+            
+            // Funcționalitate de căutare
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterQuestions(searchTerm);
+            });
+            
+            // Deschidere/închidere ghid modal
+            document.getElementById('showGuideButton').addEventListener('click', function() {
+                document.getElementById('guideModal').classList.remove('hidden');
+            });
+            
+            document.getElementById('closeGuideModal').addEventListener('click', function() {
+                document.getElementById('guideModal').classList.add('hidden');
+            });
+            
+            // Buton înapoi la lista de întrebări
+            document.getElementById('backToList').addEventListener('click', function() {
+                document.getElementById('questionDetail').classList.add('hidden');
+                document.getElementById('questionList').parentElement.classList.remove('hidden');
+            });
+            
+            // Buton de înregistrare
+            document.getElementById('recordButton').addEventListener('click', toggleRecording);
+            
+            // Buton pentru reînregistrare
+            document.getElementById('reRecordButton').addEventListener('click', function() {
+                document.getElementById('audioContainer').classList.add('hidden');
+                toggleRecording();
+            });
+            
+            // Buton pentru salvarea înregistrării
+            document.getElementById('saveRecordingButton').addEventListener('click', function() {
+                // Salvarea înregistrării în recordedAnswers
+                if (currentQuestion) {
+                    const audioURL = document.getElementById('audioPlayer').src;
+                    recordedAnswers[currentQuestion.id] = audioURL;
+                    
+                    // Actualizare progres
+                    updateRecordedAnswersCount();
+                    
+                    // Afișare feedback
+                    alert('Răspunsul tău a fost salvat!');
+                }
+            });
+            
+            // Buton pentru generarea unui nou răspuns
+            document.getElementById('generateButton').addEventListener('click', generateNewResponse);
+            
+            // Buton pentru salvarea răspunsului generat
+            document.getElementById('saveGeneratedButton').addEventListener('click', function() {
+                if (currentQuestion && currentQuestion.generatedAnswer) {
+                    // Salvarea răspunsului generat
+                    questions.find(q => q.id === currentQuestion.id).generatedAnswer = currentQuestion.generatedAnswer;
+                    questions.find(q => q.id === currentQuestion.id).generatedExample = currentQuestion.generatedExample;
+                    questions.find(q => q.id === currentQuestion.id).improvements = currentQuestion.improvements;
+                    
+                    // Actualizare progres
+                    generatedAnswers[currentQuestion.id] = true;
+                    updateGeneratedAnswersCount();
+                    
+                    // Afișare confirmare
+                    alert('Răspunsul generat a fost salvat!');
+                }
+            });
+            
+            // Buton pentru următoarea întrebare
+            document.getElementById('nextQuestionButton').addEventListener('click', showNextQuestion);
+            
+            // Inițializare: Arată toate întrebările
+            showQuestionsByCategory('all');
+        });
+
+        // Afișare întrebări după categorie
+        function showQuestionsByCategory(category) {
+            const questionList = document.getElementById('questionList');
+            questionList.innerHTML = '';
+            
+            const filteredQuestions = category === 'all' 
+                ? questions 
+                : questions.filter(q => q.category === category);
+            
+            if (filteredQuestions.length === 0) {
+                questionList.innerHTML = '<p class="text-center text-gray-500 py-4">Nu s-au găsit întrebări în această categorie.</p>';
+                return;
+            }
+            
+            filteredQuestions.forEach(question => {
+                const questionCard = createQuestionCard(question);
+                questionList.appendChild(questionCard);
+            });
+        }
+
+        // Filtrare întrebări după termen de căutare
+        function filterQuestions(searchTerm) {
+            const questionList = document.getElementById('questionList');
+            questionList.innerHTML = '';
+            
+            // Filtrare după categorie și termen de căutare
+            let filteredQuestions = currentCategory === 'all' 
+                ? questions 
+                : questions.filter(q => q.category === currentCategory);
+            
+            // Filtrare suplimentară după termenul de căutare
+            if (searchTerm) {
+                filteredQuestions = filteredQuestions.filter(q => 
+                    q.title.toLowerCase().includes(searchTerm) || 
+                    q.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredQuestions.length === 0) {
+                questionList.innerHTML = '<p class="text-center text-gray-500 py-4">Nu s-au găsit întrebări pentru această căutare.</p>';
+                return;
+            }
+            
+            filteredQuestions.forEach(question => {
+                const questionCard = createQuestionCard(question);
+                questionList.appendChild(questionCard);
+            });
+        }
+
+        // Creare card pentru întrebare
+        function createQuestionCard(question) {
+            const card = document.createElement('div');
+            card.className = 'question-card bg-gray-50 rounded-lg p-4 hover:bg-gray-100 cursor-pointer';
+            
+            // Indicator de status (vizualizat, înregistrat, generat)
+            let statusIndicator = '';
+            if (generatedAnswers[question.id]) {
+                statusIndicator = `<span class="inline-block px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 ml-2">Generat</span>`;
+            } else if (recordedAnswers[question.id]) {
+                statusIndicator = `<span class="inline-block px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 ml-2">Înregistrat</span>`;
+            } else if (answeredQuestions.has(question.id)) {
+                statusIndicator = `<span class="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 ml-2">Vizualizat</span>`;
+            }
+            
+            // Traducere categorie
+            const categoryLabels = {
+                'alcohol': 'Alcool',
+                'drugs': 'Droguri',
+                'traffic': 'Trafic',
+                'attitude': 'Atitudine',
+                'future': 'Viitor'
+            };
+            
+            const categoryLabel = categoryLabels[question.category] || question.category;
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <span class="inline-block px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800 mb-2">${categoryLabel}</span>
+                    ${statusIndicator}
+                </div>
+                <h3 class="font-semibold text-gray-800 mb-1">${question.title}</h3>
+                <p class="text-gray-600 text-sm line-clamp-2">${question.description}</p>
+            `;
+            
+            card.addEventListener('click', () => showQuestionDetail(question));
+            
+            return card;
+        }
+
+        // Afișare detalii întrebare
+        function showQuestionDetail(question) {
+            currentQuestion = question;
+            
+            document.getElementById('questionList').parentElement.classList.add('hidden');
+            document.getElementById('questionDetail').classList.remove('hidden');
+            
+            // Completare conținut
+            document.getElementById('questionCategory').textContent = getCategoryLabel(question.category);
+            document.getElementById('questionTitle').textContent = question.title;
+            document.getElementById('questionDescription').textContent = question.description;
+            
+            // Puncte de atenție ale examinatorului
+            const examinerFocusList = document.getElementById('examinerFocus');
+            examinerFocusList.innerHTML = '';
+            question.examinerFocus.forEach(point => {
+                const li = document.createElement('li');
+                li.textContent = point;
+                examinerFocusList.appendChild(li);
+            });
+            
+            // Răspuns model și exemplu
+            document.getElementById('sampleAnswer').textContent = question.sampleAnswer;
+            document.getElementById('personalExample').textContent = question.personalExample;
+            
+            // Sfaturi
+            const answerTipsList = document.getElementById('answerTips');
+            answerTipsList.innerHTML = '';
+            question.answerTips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                answerTipsList.appendChild(li);
+            });
+            
+            // Resetare conținut audio
+            document.getElementById('audioContainer').classList.add('hidden');
+            document.getElementById('recordingTime').textContent = '00:00';
+            recordingSeconds = 0;
+            
+            // Resetare buton de înregistrare
+            const recordButton = document.getElementById('recordButton');
+            recordButton.classList.remove('recording');
+            document.getElementById('recordingIndicator').classList.add('hidden');
+            
+            // Resetare conținut de generare
+            document.getElementById('personalContext').value = '';
+            document.getElementById('generatedResponseContainer').classList.add('hidden');
+            
+            // Activare tabul de răspunsuri la început
+            switchTab('response');
+            
+            // Afișare audio existent, dacă există
+            if (recordedAnswers[question.id]) {
+                document.getElementById('audioContainer').classList.remove('hidden');
+                document.getElementById('audioPlayer').src = recordedAnswers[question.id];
+            }
+            
+            // Afișare răspuns generat, dacă există
+            if (question.generatedAnswer) {
+                document.getElementById('generatedResponseContainer').classList.remove('hidden');
+                document.getElementById('generatedResponse').textContent = question.generatedAnswer;
+                document.getElementById('responseDiff').innerHTML = question.generatedExample;
+                document.getElementById('improvements').innerHTML = question.improvements;
+            }
+            
+            // Marcare întrebare ca vizualizată și actualizare progres
+            if (!answeredQuestions.has(question.id)) {
+                answeredQuestions.add(question.id);
+                updateProgress();
+            }
+        }
+
+        // Traducere etichetă categorie
+        function getCategoryLabel(category) {
+            const labels = {
+                'alcohol': 'Alcool',
+                'drugs': 'Droguri',
+                'traffic': 'Trafic',
+                'attitude': 'Atitudine',
+                'future': 'Viitor'
+            };
+            return labels[category] || category;
+        }
+
+        // Afișare următoarea întrebare
+        function showNextQuestion() {
+            // Găsirea indexului curent
+            const currentIndex = questions.findIndex(q => q.id === currentQuestion.id);
+            
+            // Următorul index (cu wrap-around)
+            const nextIndex = (currentIndex + 1) % questions.length;
+            
+            // Afișare următoarea întrebare
+            showQuestionDetail(questions[nextIndex]);
+        }
+
+        // Schimbare tab
+        function switchTab(tabName) {
+            // Resetare toate taburile
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                tab.classList.remove('text-blue-600', 'border-blue-600');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            document.querySelectorAll('[id$="Content"]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Activare tabul selectat
+            document.getElementById(`${tabName}Tab`).classList.remove('text-gray-500', 'border-transparent');
+            document.getElementById(`${tabName}Tab`).classList.add('text-blue-600', 'border-blue-600');
+            document.getElementById(`${tabName}Content`).classList.remove('hidden');
+        }
+
+        // Pornire/oprire înregistrare
+        function toggleRecording() {
+            const recordButton = document.getElementById('recordButton');
+            const recordingIndicator = document.getElementById('recordingIndicator');
+            
+            if (recordButton.classList.contains('recording')) {
+                // Oprire înregistrare
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    clearInterval(recordingTimer);
+                }
+                recordButton.classList.remove('recording');
+                recordingIndicator.classList.add('hidden');
+            } else {
+                // Pornire înregistrare
+                recordButton.classList.add('recording');
+                recordingIndicator.classList.remove('hidden');
+                startRecording();
+            }
+        }
+
+        // Pornire înregistrare
+        function startRecording() {
+            audioChunks = [];
+            recordingSeconds = 0;
+            updateRecordingTime();
+            
+            // Pornire timer
+            recordingTimer = setInterval(function() {
+                recordingSeconds++;
+                updateRecordingTime();
+            }, 1000);
+            
+            // Cerere acces microfon
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    
+                    mediaRecorder.addEventListener('dataavailable', event => {
+                        audioChunks.push(event.data);
+                    });
+                    
+                    mediaRecorder.addEventListener('stop', () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        
+                        document.getElementById('audioPlayer').src = audioUrl;
+                        document.getElementById('audioContainer').classList.remove('hidden');
+                        
+                        // Oprire stream (eliberare microfon)
+                        stream.getTracks().forEach(track => track.stop());
+                    });
+                    
+                    mediaRecorder.start();
+                })
+                .catch(error => {
+                    console.error('Eroare la accesarea microfonului:', error);
+                    alert('Eroare la accesarea microfonului. Te rugăm să verifici permisiunile browserului.');
+                    
+                    // Resetare UI înregistrare
+                    const recordButton = document.getElementById('recordButton');
+                    recordButton.classList.remove('recording');
+                    document.getElementById('recordingIndicator').classList.add('hidden');
+                    clearInterval(recordingTimer);
+                });
+        }
+
+        // Actualizare timp înregistrare
+        function updateRecordingTime() {
+            const minutes = Math.floor(recordingSeconds / 60);
+            const seconds = recordingSeconds % 60;
+            document.getElementById('recordingTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Generare răspuns nou
+        function generateNewResponse() {
+            if (!currentQuestion) return;
+            
+            // Afișare indicator de încărcare
+            const generateButton = document.getElementById('generateButton');
+            const generateSpinner = document.getElementById('generateSpinner');
+            const generateButtonText = document.getElementById('generateButtonText');
+            
+            generateButton.disabled = true;
+            generateSpinner.classList.remove('hidden');
+            generateButtonText.textContent = 'Se generează...';
+            
+            // Obținere context personal
+            const personalContext = document.getElementById('personalContext').value;
+            
+            // Simulare generare răspuns (într-o aplicație reală, aici s-ar face un apel API)
+            setTimeout(() => {
+                // Generare răspunsuri îmbunătățite bazate pe tipul de întrebare
+                const generatedData = generateImprovedResponse(currentQuestion, personalContext);
+                
+                // Salvare temporară în obiectul currentQuestion
+                currentQuestion.generatedAnswer = generatedData.newAnswer;
+                currentQuestion.generatedExample = generatedData.diffHtml;
+                currentQuestion.improvements = generatedData.improvements;
+                
+                // Afișare rezultate
+                document.getElementById('generatedResponse').textContent = generatedData.newAnswer;
+                document.getElementById('responseDiff').innerHTML = generatedData.diffHtml;
+                document.getElementById('improvements').innerHTML = generatedData.improvements;
+                document.getElementById('generatedResponseContainer').classList.remove('hidden');
+                
+                // Resetare buton
+                generateButton.disabled = false;
+                generateSpinner.classList.add('hidden');
+                generateButtonText.textContent = 'Generează răspuns nou';
+                
+                // Marcare ca generat
+                generatedAnswers[currentQuestion.id] = true;
+                updateGeneratedAnswersCount();
+                
+            }, 2000); // Simulare delay de procesare de 2 secunde
+        }
+
+        // Generare răspuns îmbunătățit
+        function generateImprovedResponse(question, personalContext) {
+            // În funcție de categoria întrebării, generăm răspunsuri diferite
+            let newAnswer = '';
+            let newExample = '';
+            let improvements = '';
+            
+            // Adaptăm răspunsurile în funcție de categoria întrebării
+            switch(question.category) {
+                case 'alcohol':
+                    newAnswer = generateAlcoholResponse(question, personalContext);
+                    newExample = generateAlcoholExample(question, personalContext);
+                    improvements = generateAlcoholImprovements();
+                    break;
+                case 'drugs':
+                    newAnswer = generateDrugsResponse(question, personalContext);
+                    newExample = generateDrugsExample(question, personalContext);
+                    improvements = generateDrugsImprovements();
+                    break;
+                case 'traffic':
+                    newAnswer = generateTrafficResponse(question, personalContext);
+                    newExample = generateTrafficExample(question, personalContext);
+                    improvements = generateTrafficImprovements();
+                    break;
+                case 'attitude':
+                    newAnswer = generateAttitudeResponse(question, personalContext);
+                    newExample = generateAttitudeExample(question, personalContext);
+                    improvements = generateAttitudeImprovements();
+                    break;
+                case 'future':
+                    newAnswer = generateFutureResponse(question, personalContext);
+                    newExample = generateFutureExample(question, personalContext);
+                    improvements = generateFutureImprovements();
+                    break;
+                default:
+                    newAnswer = generateGenericResponse(question, personalContext);
+                    newExample = generateGenericExample(question, personalContext);
+                    improvements = generateGenericImprovements();
+            }
+            
+            // Generare HTML pentru diferențe
+            const diffHtml = generateDiffHtml(question.personalExample, newExample);
+            
+            return {
+                newAnswer: newAnswer,
+                diffHtml: diffHtml,
+                improvements: improvements
+            };
+        }
+
+        // Generare HTML cu diferențe evidențiate
+        function generateDiffHtml(originalText, newText) {
+            // O implementare simplificată pentru evidențierea diferențelor
+            // În realitate, un algoritm de diff ar fi mai precis
+            
+            const oldParagraphs = originalText.split('. ');
+            const newParagraphs = newText.split('. ');
+            
+            let html = '<div class="space-y-3">';
+            
+            // Adăugare paragrafe eliminate
+            html += '<div class="mb-2"><strong>Exemple originale:</strong></div>';
+            oldParagraphs.forEach(p => {
+                if (p.trim() !== '') {
+                    html += `<div class="diff-highlight-remove">${p}.</div>`;
+                }
+            });
+            
+            // Adăugare paragrafe noi
+            html += '<div class="mt-4 mb-2"><strong>Exemple personale noi:</strong></div>';
+            newParagraphs.forEach(p => {
+                if (p.trim() !== '') {
+                    html += `<div class="diff-highlight-add">${p}.</div>`;
+                }
+            });
+            
+            html += '</div>';
+            
+            return html;
+        }
+
+        // Generare îmbunătățiri generice
+        function generateGenericImprovements() {
+            const improvements = [
+                "Răspunsul nou este mult mai detaliat și personalizat, oferind contexte concrete și situații specifice.",
+                "Noul exemplu personal include detalii senzoriale și emoționale care îl fac mai credibil și mai convingător.",
+                "Răspunsul urmează o structură clară: situație -> gânduri -> acțiuni -> învățăminte, care ajută examinatorul să urmărească procesul tău de gândire.",
+                "Exemplul nou include nume specifice, locații și cronologie clară care ancorează povestea în realitate.",
+                "Limbajul folosit este mai natural și mai conversațional, evitând tonul formal sau robotic."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Generare răspunsuri pentru categoria alcool
+        function generateAlcoholResponse(question, personalContext) {
+            // Bază de răspunsuri pentru întrebările despre alcool
+            const responses = [
+                "Recunosc că am consumat alcool din cauza mai multor factori care s-au împletit în viața mea. În primul rând, a fost vorba despre presiunea socială - simțeam că trebuie să beau pentru a mă integra în anumite grupuri. Apoi, am descoperit că alcoolul mă ajuta să gestionez stresul și anxietatea, oferindu-mi o evadare temporară din problemele mele. Treptat, am început să folosesc alcoolul ca un instrument de auto-medicație pentru stările mele emoționale negative. Acum înțeleg că aceasta a fost o strategie nesănătoasă, care doar a mascat problemele reale fără să le rezolve.",
+                "Momentul în care am realizat că am o problemă cu alcoolul a fost gradual, nu un singur eveniment. Am început să observ că relațiile mele sufereau, că performanța la serviciu scădea și că sănătatea mea fizică se deteriora. Punctul culminant a fost când un prieten apropiat m-a confruntat direct despre comportamentul meu, arătându-mi oglinda realității. Am simțit un amestec de rușine, frică și, în același timp, o ușurare că cineva a spart zidul de negare pe care îl construisem. Această confruntare sinceră a fost începutul călătoriei mele spre recuperare.",
+                "Pentru a preveni recăderile, am implementat un sistem complex de strategii. În primul rând, particip regulat la ședințe de terapie și grup de sprijin, unde învăț continuu despre dependență și recuperare. Mi-am restructurat complet cercul social, înconjurându-mă de oameni care susțin sobrietatea mea. Am dezvoltat mecanisme sănătoase de gestionare a stresului precum meditația, sportul și jurnalul zilnic. De asemenea, am stabilit limite clare în situații sociale unde este prezent alcoolul și am întotdeauna pregătit un plan de urgență dacă simt dorința de a consuma."
+            ];
+            
+            // Selectare aleatorie a unui răspuns (în realitate, selecția ar fi mai sofisticată)
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function generateAlcoholExample(question, personalContext) {
+            // Exemple personale pentru întrebări legate de alcool
+            const examples = [
+                "Îmi amintesc perfect cum a început totul. Lucram la un proiect intens care necesita ore suplimentare, iar soția mea tocmai născuse primul nostru copil. Presiunea era enormă. Într-o seară, după ce bebelușul în sfârșit adormise după ore de plâns, am deschis o sticlă de whisky doar pentru 'un pahar mic să mă relaxez'. Acel pahar s-a transformat rapid în rutină zilnică. În câteva luni, am ajuns să beau în secret, ascunzând sticle prin casă. Soția mea a observat schimbarea în comportamentul meu - eram mai iritabil când nu beam și mai distant emoțional. Când a găsit o sticlă ascunsă în dulapul de scule, m-a confruntat, iar eu am negat agresiv, deși era evident. Acel moment de minciună față de persoana pe care o iubeam a fost un semnal de alarmă pentru mine.",
+                "Îmi amintesc de o dimineață de marți când am realizat cât de gravă era situația. Am avut o beție severă în seara precedentă și am adormit fără să setez alarma. Am ratat o întâlnire crucială cu un client important. Șeful meu m-a chemat în birou, și în timp ce mă mustra, am observat dezamăgirea profundă în ochii lui. Nu era furios, ci dezamăgit - ceea ce a fost mult mai greu de suportat. Mi-a spus: 'Te-am considerat cel mai promițător angajat al nostru'. Folosirea timpului trecut m-a lovit ca un pumn. În acea zi, pe drumul spre casă, am văzut reflexia mea într-o vitrină - ochii roșii, fața umflată - și nu m-am recunoscut. Am parcat mașina și am plâns pentru prima dată în ani. Am sunat la un centru de reabilitare chiar din parcare.",
+                "Pentru a evita recăderile, mi-am creat o rețea de siguranță extrem de detaliată. De exemplu, pentru evenimentele sociale unde știu că va fi alcool, am un 'buddy system' cu prietenul meu Alexandru, care este și el în recuperare. Avem un cod stabilit - dacă îi trimit mesaj cu textul 'Verifică e-mailul', știe că mă lupt cu dorința de a bea și vine imediat să mă ajute sau îmi oferă suport prin telefon. De asemenea, practic 'scanări corporale' de trei ori pe zi - dimineața, la prânz și seara - unde îmi acord 5 minute să-mi evaluez starea emoțională și fizică, identificând factori declanșatori potențiali înainte ca aceștia să devină copleșitori. În plus, am redecorat complet locurile din casa mea unde obișnuiam să beau, schimbând asocierile negative."
+            ];
+            
+            return examples[Math.floor(Math.random() * examples.length)];
+        }
+
+        function generateAlcoholImprovements() {
+            const improvements = [
+                "Noul răspuns include detalii cronologice specifice ('dimineață de marți', 'după ce bebelușul adormise') care ancorează povestea în realitate.",
+                "Exemplul personal nou introduce personaje specifice (soția, șeful, prietenul Alexandru) care adaugă autenticitate și credibilitate narațiunii.",
+                "Noul exemplu include dialoguri directe care fac relatarea mai vie și mai convingătoare.",
+                "Răspunsul nou descrie experiențe senzoriale ('ochii roșii, fața umflată') și emoționale ('dezamăgire', 'am plâns') care demonstrează capacitatea de autoreflecție și conștientizare.",
+                "Strategiile de prevenire sunt mult mai specifice și practice ('buddy system', 'scanări corporale', 'codul verifică e-mailul'), demonstrând un angajament serios față de recuperare."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Generare răspunsuri pentru categoria droguri
+        function generateDrugsResponse(question, personalContext) {
+            const responses = [
+                "Consumul meu de droguri a început dintr-o combinație de curiozitate adolescentină și dorință de a scăpa de presiunea constantă pe care o simțeam. Inițial, era doar experimentare ocazională în contexte sociale, dar treptat a devenit un mecanism de coping pentru anxietatea și insecuritatea mea. Ceea ce a început ca o modalitate de a mă simți conectat cu ceilalți s-a transformat într-o dependență care mă izola tot mai mult. Am înțeles ulterior că căutam de fapt o soluție externă pentru probleme interne pe care nu știam cum să le gestionez sănătos.",
+                "Efectele drogurilor asupra capacității mele de a conduce au fost mult mai profunde și de durată decât îmi imaginam. Chiar și la zile după consum, aveam reflexe încetinite, capacitate redusă de a evalua distanțele și vitezele, și o tendință de a-mi supraevalua abilitățile. Cel mai periculos aspect era falsa senzație de control - credeam că sunt perfect capabil să conduc, când în realitate funcțiile mele cognitive erau semnificativ afectate. Acum înțeleg că nu există un nivel 'sigur' de consum de droguri când vine vorba de condus.",
+                "Pentru a mă asigura că nu voi mai consuma droguri, am implementat schimbări radicale în toate aspectele vieții mele. Am întrerupt complet legăturile cu anturajul asociat cu consumul și am cultivat relații noi, bazate pe valori și interese comune sănătoase. Particip la terapie regulat pentru a aborda problemele fundamentale care m-au condus inițial spre consum. Mi-am dezvoltat o rutină zilnică strictă care include exerciții fizice, meditație și activități creative care îmi oferă satisfacția pe care o căutam anterior în droguri. De asemenea, am învățat să recunosc și să gestionez factorii declanșatori înainte ca aceștia să devină problematici."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function generateDrugsExample(question, personalContext) {
+            const examples = [
+                "Primul contact cu drogurile l-am avut la 19 ani, în primul an de facultate, când încercam disperat să mă integrez în noul mediu. Mă mutasem din orașul meu natal, Botoșani, la București, și mă simțeam copleșit de diferența de ritm și mentalitate. La o petrecere în cămin, când un coleg de an mi-a oferit cannabis, am acceptat pentru că nu voiam să par 'provincial' sau 'copilăros'. Efectul mi-a plăcut - pentru prima dată după luni de zile, anxietatea socială pe care o simțeam s-a diminuat. Curând, am început să fumez în fiecare weekend, apoi de câteva ori pe săptămână. Când am ratat primul examen important, am mințit părinții că profesorul era prea exigent. După un an, când am trecut la substanțe mai puternice, deja îmi construisem o identitate în jurul consumului - eram 'tipul cool care știe să se distreze'. În realitate, eram din ce în ce mai izolat și deprimat.",
+                "În primăvara anului trecut, am avut un moment care mi-a schimbat perspectiva asupra efectelor reziduale ale drogurilor. Consumasem MDMA sâmbătă seara la un festival, iar luni dimineața, deși mă simțeam 'normal', am decis să conduc la un interviu de angajare în orașul vecin. Pe autostradă, conduceam cu aproximativ 130 km/h când am realizat brusc că de fapt fixasem hipnotic luminile mașinii din față pentru aproape un minut, pierzând complet noțiunea distanței și ignorând două ieșiri pe care trebuia să le iau. Am tras pe dreapta, tremurând, realizând că eram la doar câteva momente de o potențială tragedie. Deși trecuseră peste 36 de ore de la consum, creierul meu era încă semnificativ afectat. Am ratat interviul, dar am câștigat o lecție crucială despre cât de înșelătoare poate fi percepția propriei funcționalități după consum.",
+                "Strategia mea de menținere a abstinenței include ritualuri zilnice foarte specifice. În fiecare dimineață la 6:30, alerg minimum 5 kilometri, indiferent de vreme - această disciplină îmi oferă o eliberare naturală de endorfine și stabilește tonul zilei. Folosesc aplicația 'Recovery Path' care îmi trimite notificări aleatorii în timpul zilei pentru micro-exerciții de mindfulness. Am un jurnal împărțit pe coduri de culori unde notez factorii declanșatori (roșu), strategiile de coping (verde) și succesele (albastru). Terapeuta mea, doamna Ionescu, mi-a creat o tehnică personalizată numită '4-3-2-1' pentru momentele de criză: identific 4 lucruri pe care le văd, 3 sunete pe care le aud, 2 texturi pe care le simt și 1 miros din jur. Această ancoră în prezent m-a ajutat să depășesc cele mai intense impulsuri de consum."
+            ];
+            
+            return examples[Math.floor(Math.random() * examples.length)];
+        }
+
+        function generateDrugsImprovements() {
+            const improvements = [
+                "Noul exemplu personal include o poveste structurată cronologic, cu un început clar ('primul an de facultate'), o dezvoltare și un punct culminant care demonstrează înțelegerea progresiei dependenței.",
+                "Răspunsul nou include detalii geografice specifice ('Botoșani', 'București') și contexte clare ('petrecere în cămin', 'festival', 'autostradă') care fac relatarea mai autentică și credibilă.",
+                "Exemplul despre condus menționează detalii precise ('130 km/h', '36 de ore de la consum') care demonstrează o amintire clară și o analiză onestă a incidentului.",
+                "Strategiile de abstinență sunt extrem de specifice și cuantificabile ('5 kilometri', '6:30'), arătând un angajament serios și o înțelegere a importanței rutinei în recuperare.",
+                "Noul răspuns include numele unor tehnici și instrumente specifice ('Recovery Path', tehnica '4-3-2-1', jurnalul codat în culori) care demonstrează un proces terapeutic autentic și personal."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Generare răspunsuri pentru categoria trafic
+        function generateTrafficResponse(question, personalContext) {
+            const responses = [
+                "Respectarea limitelor de viteză este fundamentală pentru siguranța rutieră din multiple motive. În primul rând, viteza redusă oferă mai mult timp de reacție în situații neprevăzute, permițându-mi să evit coliziuni. În al doilea rând, forța de impact crește exponențial cu viteza, ceea ce înseamnă că diferența dintre 50 km/h și 70 km/h poate fi diferența dintre viață și moarte în caz de accident. De asemenea, limitele sunt stabilite strategic în funcție de condiții specifice zonei - vizibilitate, curbe, prezența pietonilor. Nu în ultimul rând, viteza adaptată contribuie la fluidizarea traficului, reducerea poluării și un consum mai eficient de combustibil.",
+                "Privind retrospectiv, comportamentul meu anterior la volan a fost marcat de impulsivitate și o percepție distorsionată asupra propriilor abilități. Depășeam frecvent limitele de viteză, considerându-le simple sugestii, nu reguli vitale. Conduceam agresiv, schimbând benzile frecvent pentru a 'câștiga' secunde nesemnificative. Păstram o distanță inadecvată față de vehiculele din față, punând presiune pe ceilalți conducători. În plus, eram constant distras de telefon și alte dispozitive. Deși mă consideram un șofer tehnic bun, îmi lipsea complet maturitatea și responsabilitatea necesare pentru un condus cu adevărat sigur.",
+                "Când mă aflu sub presiunea timpului astăzi, abordarea mea este complet diferită. Înainte de toate, planific mai bine călătoriile, incluzând întotdeauna un buffer de 20-30% din timpul estimat pentru situații neprevăzute. Dacă totuși ajung în întârziere, prima acțiune este să informez persoana care mă așteaptă, eliminând astfel presiunea psihologică de a ajunge 'la timp cu orice preț'. Folosesc tehnici de respirație conștientă pentru a-mi menține calmul și mă concentrez pe condusul defensiv. Am învățat că o întârziere de câteva minute este întotdeauna preferabilă riscului unui accident, iar această schimbare de perspectivă mă ajută să mențin prioritățile corecte."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function generateTrafficExample(question, personalContext) {
+            const examples = [
+                "În septembrie anul trecut, conduceam pe DN1 spre Brașov, unde urma să particip la nunta celui mai bun prieten. Deși pornisem cu 30 de minute mai devreme, întâlnisem trafic intens în zona Predeal. În trecut, această situație m-ar fi frustrat enorm, determinându-mă să încerc depășiri riscante sau să conduc agresiv. De data aceasta, când am observat că întârziam, primul lucru pe care l-am făcut a fost să cer soției mele să-l sune pe Andrei (mirele) și să-l anunțe că vom întârzia aproximativ 20 de minute la ceremonie. Apoi am pus o muzică relaxantă, am deschis geamul pentru aer proaspăt și am acceptat situația. Am observat cum tensiunea din umeri mi s-a diminuat instantaneu când am luat decizia conștientă de a nu mă grăbi. În loc să mă concentrez pe ceasul de bord, am început să apreciez peisajul montan. Am ajuns cu 15 minute întârziere, calm și prezent, pregătit să mă bucur de eveniment - spre deosebire de alți invitați care au ajuns la timp, dar stresați și iritați din cauza traficului.",
+                "Îmi amintesc perfect un incident care mi-a schimbat pentru totdeauna perspectiva asupra limitelor de viteză. Era o zi de joi, pe șoseaua de centură a Bucureștiului, o rută pe care o parcurgeam zilnic și unde obișnuiam să conduc constant cu 20-30 km/h peste limita legală, considerând că o cunosc 'ca pe propriul buzunar'. Pe o porțiune dreaptă, unde limita era de 70 km/h, conduceam cu aproximativ 100 km/h când, brusc, o căprioară a sărit din vegetația de pe marginea drumului. Între momentul în care am văzut-o și momentul în care am reacționat au trecut doar fracțiuni de secundă, dar la viteza aceea, am parcurs aproape 28 de metri în acest timp. Am frânat brusc, iar mașina a derapat, oprindu-se la doar câțiva centimetri de un stâlp. Încă îmi amintesc vibrația volanului sub palme și mirosul de cauciuc ars. În acel moment, matematica vitezei a devenit real pentru mine - dacă aș fi respectat limita de 70 km/h, aș fi parcurs cu 8-9 metri mai puțin în timpul de reacție, ceea ce mi-ar fi dat suficient spațiu pentru o frânare controlată.",
+                "Acum doi ani, am implementat un sistem personal pentru a gestiona situațiile de trafic stresante, după un incident în care aproape am lovit un biciclist pentru că eram nervos și grăbit. Prima componentă este 'regula celor 3 respirații' - când simt că mă enervez din cauza unui șofer sau a unei situații, iau trei respirații adânci înainte de a reacționa în vreun fel. A doua componentă este ceea ce eu numesc 'perspectiva persoanei iubite' - când sunt tentat să conduc agresiv, îmi imaginez că persoana din mașina din față este mama sau fratele meu, ceea ce îmi schimbă instantaneu atitudinea. A treia componentă este un ritual pre-conducere de 2 minute: înainte de a porni motorul, stau liniștit în mașină, îmi setez toate dispozitivele necesare (GPS, muzică), îmi stabilesc intenția de a conduce calm și îmi reamintesc cele două reguli anterioare. De când am implementat acest sistem, nu am mai avut niciun incident stresant și, surprinzător, timpul mediu al călătoriilor mele nu a crescut semnificativ."
+            ];
+            
+            return examples[Math.floor(Math.random() * examples.length)];
+        }
+
+        function generateTrafficImprovements() {
+            const improvements = [
+                "Noul exemplu include locații specifice românești ('DN1', 'Brașov', 'Predeal', 'șoseaua de centură a Bucureștiului') care ancorează experiența în realitatea locală.",
+                "Răspunsul îmbunătățit conține calcule precise ('28 de metri', '8-9 metri mai puțin') care demonstrează o înțelegere profundă a relației dintre viteză, timp de reacție și distanță de frânare.",
+                "Exemplul nou include detalii senzoriale vivide ('vibrația volanului', 'mirosul de cauciuc ars', 'aer proaspăt') care fac relatarea mai autentică și mai memorabilă.",
+                "Strategiile de gestionare a stresului sunt structurate clar în sisteme cu nume ('regula celor 3 respirații', 'perspectiva persoanei iubite', 'ritual pre-conducere'), demonstrând un proces de gândire organizat.",
+                "Noul răspuns include reacțiile emoționale și fizice ('tensiunea din umeri', 'calm și prezent') care arată capacitatea de autoanaliză și conștientizare corporală."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Generare răspunsuri pentru categoria atitudine
+        function generateAttitudeResponse(question, personalContext) {
+            const responses = [
+                "Un comportament responsabil în trafic înseamnă pentru mine mai mult decât simpla respectare a regulilor scrise. Este vorba despre cultivarea unei atitudini preventive și empatice față de toți participanții la trafic. Aceasta include anticiparea potențialelor pericole înainte ca acestea să devină iminente, adaptarea continuă a condusului la condițiile meteorologice și de trafic, și menținerea unei stări optime psihice și fizice înainte de a mă urca la volan. Înseamnă să recunosc că, prin deciziile mele la volan, dețin o responsabilitate directă pentru siguranța nu doar a mea, ci și a celorlalți participanți la trafic, de la șoferi la pietoni și bicicliști.",
+                "Când un alt participant la trafic face o greșeală, prima mea reacție este să creez spațiu de siguranță, nu să pedepsesc sau să 'educ' persoana respectivă. Am învățat că reacțiile emoționale negative, precum furia sau frustrarea, doar îmi diminuează propria capacitate de a conduce în siguranță. Încerc să privesc situația cu empatie - toți facem greșeli și nimeni nu pornește la drum cu intenția de a crea probleme. Această perspectivă mă ajută să rămân calm și concentrat pe ceea ce pot controla - propriul comportament. De asemenea, folosesc aceste situații ca oportunități de învățare, întrebându-mă dacă eu însumi aș putea face greșeli similare și cum le-aș putea preveni.",
+                "Dacă un prieten ar intenționa să conducă sub influența alcoolului, aș interveni ferm și direct, fără să las loc de negociere pe această temă. I-aș explica clar riscurile nu doar pentru permisul său, ci pentru viața sa și a celorlalți. Aș oferi alternativele concrete - de la a-l conduce eu personal acasă (dacă sunt treaz), la a comanda un taxi sau ridesharing. Dacă ar refuza, aș escalada intervenția, implicând alți prieteni sau, în ultimă instanță, luând măsuri pentru a-l împiedica fizic să conducă, precum păstrarea cheilor. Prioritatea mea ar fi siguranța tuturor, chiar dacă asta ar însemna un conflict temporar cu prietenul meu."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function generateAttitudeExample(question, personalContext) {
+            const examples = [
+                "Un exemplu definitoriu pentru cum privesc responsabilitatea în trafic s-a întâmplat iarna trecută, când conduceam pe Valea Oltului în condiții de ninsoare abundentă. Aveam o întâlnire de afaceri importantă în Sibiu, pentru care plecasem din București cu patru ore mai devreme decât în mod normal. Pe măsură ce condițiile meteo se deteriorau, mulți șoferi continuau să mențină viteze neadaptate, depășind în zone cu vizibilitate redusă. În loc să mă las influențat de ritmul general sau de presiunea de a ajunge 'la timp', am luat decizia conștientă de a reduce viteza la 30-40 km/h, de a crește distanța față de mașina din față la cel puțin 100 de metri și de a activa luminile de avarie pentru a avertiza șoferii din spate despre ritmul lent. Am sunat organizatorul întâlnirii, explicându-i situația și posibilitatea unei întârzieri semnificative. În timpul călătoriei de șase ore (dublu față de timpul normal), am numărat 11 mașini ieșite de pe carosabil - toate conducând vizibil mai rapid decât mine. Am ajuns cu o oră întârziere, dar în siguranță, și am fost surprins să descopăr că doi dintre participanți nu ajunseseră deloc, având accidente minore pe drum.",
+                "Reacția mea la greșelile altor șoferi s-a schimbat radical după o experiență personală. În urmă cu trei ani, conduceam pe bulevardul Unirii din București când un taxi m-a tăiat brusc, forțându-mă să frânez puternic. Instinctiv, am început să claxonez îndelung și să fac gesturi furioase. Șoferul taxiului a oprit, a coborât și a început să se îndrepte spre mașina mea într-o stare evidentă de furie. Situația risca să degenereze când am observat că pe bancheta din spate a taxiului se afla o femeie vizibil însărcinată, probabil în travaliu, judecând după expresia ei de durere. Mi-am dat seama instantaneu că taximetristul nu făcuse o manevră agresivă intenționat, ci încerca probabil să ajungă rapid la spital. Am coborât, mi-am cerut scuze și am întrebat dacă pot ajuta cumva. Șoferul, recunoscător pentru schimbarea mea de atitudine, mi-a explicat situația, iar eu am decis să îi escortez până la maternitatea Giulești, ajutându-i să traverseze mai ușor prin trafic. Această experiență m-a învățat că în spatele fiecărei manevre aparent iresponsabile poate exista o poveste pe care nu o cunosc, și că reacția mea imediată ar trebui să fie prudența și empatia, nu judecata și furia.",
+                "Anul trecut, la petrecerea de Revelion organizată la casa prietenului meu Radu din Mogoșoaia, am fost pus într-o situație care mi-a testat principiile. În jurul orei 2 dimineața, Mihai, un prieten comun care consumase vizibil prea mult alcool, a anunțat că pleacă acasă cu mașina spre Ploiești, argumentând că 'știe drumul cu ochii închiși' și că 'a condus și în stări mai rele'. Când am încercat să-l conving calm să rămână peste noapte, a devenit defensiv și a insistat că e 'perfect în stare să conducă'. În acel moment, am schimbat strategia. În loc să continui discuția în fața tuturor, l-am luat deoparte și i-am arătat o știre recentă despre un accident mortal cauzat de un șofer beat, întâmplat chiar pe ruta lui. Apoi i-am amintit de fiica lui de 5 ani și l-am întrebat simplu: 'Ce s-ar întâmpla cu ea dacă pățești ceva în seara asta?'. Această abordare personalizată l-a făcut să se oprească și să reflecteze. Când a ezitat, i-am oferit două alternative concrete: fie îl conduc eu acasă cu mașina mea (nu consumasem alcool), fie îi rezerv o cameră la un hotel din apropiere, pe cheltuiala mea. A ales prima variantă, iar a doua zi mi-a trimis un mesaj lung de mulțumire, recunoscând că intervenția mea probabil i-a salvat viața."
+            ];
+            
+            return examples[Math.floor(Math.random() * examples.length)];
+        }
+
+        function generateAttitudeImprovements() {
+            const improvements = [
+                "Exemplele noi includ locații specifice românești ('Valea Oltului', 'Sibiu', 'București', 'bulevardul Unirii', 'maternitatea Giulești', 'Mogoșoaia', 'Ploiești') care fac narațiunea mult mai autentică și relevantă.",
+                "Noul răspuns conține detalii numerice precise ('patru ore mai devreme', '30-40 km/h', '100 de metri', 'șase ore', '11 mașini') care demonstrează o memorie clară și o analiză concretă a situației.",
+                "Exemplele includ dileme morale reale și procese decizionale complexe, nu doar declarații generale, arătând maturitate și gândire etică.",
+                "Interacțiunile cu ceilalți participanți la trafic și prietenii sunt descrise detaliat, incluzând dialoguri și reacții emoționale care adaugă profunzime și verosimilitate.",
+                "Răspunsurile noi demonstrează o capacitate de a pune în aplicare principii abstracte (responsabilitate, empatie) în situații concrete de viață, făcând conexiunea între valori și comportamente."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Generare răspunsuri pentru categoria viitor
+        function generateFutureResponse(question, personalContext) {
+            const responses = [
+                "Pentru participarea sigură la trafic în viitor, am dezvoltat un sistem complex de stratificări preventive. La nivel de planificare, îmi organizez întotdeauna călătoriile cu suficient timp buffer și verific în prealabil condițiile de trafic și meteo. La nivel tehnic, mențin mașina în condiție optimă prin verificări regulate, acordând atenție specială sistemelor critice precum frânele și anvelopele. La nivel personal, practic tehnici de mindfulness pentru a-mi gestiona emoțiile la volan și am eliminat complet folosirea telefonului în timpul condusului. De asemenea, continui să mă educ despre siguranța rutieră prin cursuri avansate de conducere defensivă și actualizarea constantă a cunoștințelor despre regulile de circulație.",
+                "Experiența prin care am trecut a fost inițial devastatoare pentru mine, dar cu timpul am transformat-o într-o oportunitate de creștere fundamentală. Am învățat valoarea unei auto-evaluări oneste, recunoscând că aveam tipare de comportament problematice nu doar la volan, ci și în alte aspecte ale vieții mele. Am dezvoltat o capacitate mai bună de a-mi gestiona impulsurile și de a lua decizii bazate pe consecințele pe termen lung, nu pe satisfacția imediată. Poate cel mai important, am internalizat ideea că libertatea autentică nu înseamnă absența regulilor, ci asumarea responsabilă a unui cadru care protejează atât bunăstarea mea, cât și a celor din jurul meu.",
+                "În situații de stres în trafic, am acum un protocol clar pe care îl aplic sistematic. Primul pas este recunoașterea - identific semnele fizice ale stresului precum încordarea mâinilor pe volan sau respirația accelerată. Al doilea pas este dezescaladarea - practic tehnica 4-7-8 (inspir pentru 4 secunde, retin pentru 7, expir pentru 8) și reduc stimulii externi precum volumul radioului. Al treilea pas este reformularea mentală - transform gânduri precum 'Sunt blocat în trafic' în 'Am timp suplimentar să ascult podcastul preferat'. Ultimul pas este adaptarea comportamentului - mențin o distanță mai mare față de ceilalți participanți la trafic și accept că pot ajunge cu întârziere la destinație."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function generateFutureExample(question, personalContext) {
+            const examples = [
+                "Un exemplu concret al strategiilor mele de siguranță în trafic este călătoria lunară pe care o fac la părinții mei în Constanța, o distanță de aproximativ 230 km din București. Înainte, această călătorie era o sursă de stres, pe care o abordăm competitiv, încercând mereu să bat 'recordul personal' de timp. Acum, procesul începe cu o zi înainte, când verific prognoza meteo și situația traficului pe aplicația Waze, planificând ruta optimă și evitând orele de vârf. Mașina mea, un Volkswagen Golf din 2015, are un caiet dedicat în care notez toate verificările tehnice - în dimineața călătoriei verific sistematic presiunea în anvelope, nivelul lichidelor și funcționarea luminilor. Am instalat aplicația DriveFocus pe telefon, care îmi blochează notificările și răspunde automat la apeluri cu mesajul 'Conduc acum, te sun când ajung în siguranță'. Pe autostrada A2, folosesc cruise control-ul setat exact la limita legală de 130 km/h și am regula personală de a opri la fiecare oră de condus pentru o pauză de 10 minute la una din benzinăriile de pe traseu, unde fac câțiva pași și beau apă. Rezultatul? Călătoria durează acum cu aproximativ 20 de minute mai mult decât înainte, dar ajung relaxat, nu epuizat, și am eliminat complet incidentele stresante care erau cândva obișnuite.",
+                "Împlinirea a 37 de ani, în februarie anul trecut, a coincis cu aniversarea unui an de când mi-am recăpătat permisul de conducere după suspendare. Am decis să transform această dată într-un moment anual de reflecție profundă. Am rezervat o cameră la o pensiune izolată din Sinaia, unde am petrecut weekend-ul singur, fără dispozitive electronice, evaluându-mi progresul. Am scris într-un jurnal dedicat răspunsuri la întrebări precum: 'Care au fost cele mai dificile situații în trafic din ultimul an și cum le-am gestionat?', 'Ce vechi tipare de comportament au încercat să reapară?', 'Ce noi strategii am dezvoltat?'. Acest ritual mi-a permis să observ cum valorile mele s-au transformat - de la a vedea mașina ca un instrument de auto-exprimare și competiție, la a o considera un mijloc de transport care îmi permite să mă conectez cu oamenii și locurile importante pentru mine. Am realizat că principalul beneficiu al schimbării mele nu a fost evitarea problemelor legale, ci o calitate a vieții semnificativ îmbunătățită - sunt mai prezent, mai calm și mai conectat cu cei din jurul meu. Intenționez să continui acest ritual anual de reflecție, adăugând în fiecare an noi dimensiuni de analiză și stabilind obiective specifice de îmbunătățire.",
+                "Pentru a gestiona stresul în trafic, am transformat interiorul mașinii mele Dacia Duster într-un 'cockpit anti-stres' personalizat. În primul rând, am un playlist Spotify special numit 'Calm în trafic' cu muzică instrumentală la 60-80 BPM, ritm care s-a dovedit științific că reduce ritmul cardiac. Țin un spray cu lavandă în torpedo, pe care îl folosesc discret când simt primele semne de iritare (cercetările arată că lavanda reduce nivelul de cortizol). Pe bord am lipit un mic sticker cu fotografia familiei mele, ca memento vizual instant al motivului pentru care siguranța trebuie să primeze. La semafor, practic exercițiul 'scanning corporal în 30 de secunde' - verific rapid nivelul de tensiune din umeri, maxilare și mâini, relaxând conștient zonele încordate. Când sunt blocat în traficul de pe Șoseaua Nordului în drumul spre birou, transform frustarea în productivitate folosind funcția dictare a telefonului pentru a înregistra idei de proiect sau lista de cumpărături - astfel, timpul 'pierdut' devine util. Aceste tehnici combinate mi-au redus semnificativ nivelul de stres, fapt confirmat și de colegii care au remarcat că nu mai ajung nervos la întâlnirile de dimineață, chiar și după un trafic intens."
+            ];
+            
+            return examples[Math.floor(Math.random() * examples.length)];
+        }
+
+        function generateFutureImprovements() {
+            const improvements = [
+                "Exemplele noi includ detalii extrem de specifice legate de vehicule, rute și locații ('Dacia Duster', 'Volkswagen Golf din 2015', 'autostrada A2', 'Constanța', 'Șoseaua Nordului', 'Sinaia') care demonstrează autenticitate și ancorare în realitatea locală.",
+                "Răspunsurile noi incorporează tehnici bazate pe cercetări științifice ('muzică la 60-80 BPM', 'lavanda reduce nivelul de cortizol', 'tehnica 4-7-8') care arată o abordare informată și educată a gestionării comportamentului.",
+                "Exemplele personale sunt structurate în sisteme și protocoale clare ('cockpit anti-stres', 'scanning corporal în 30 de secunde', 'ritual anual de reflecție') care demonstrează un nivel înalt de organizare și angajament.",
+                "Noile răspunsuri includ reflecții despre transformarea valorilor personale și beneficiile neașteptate ale schimbării, arătând o profunzime a procesului de auto-dezvoltare.",
+                "Exemplele conțin măsuri concrete cuantificabile ('pauză de 10 minute la fiecare oră', '20 de minute mai mult', '37 de ani') care oferă credibilitate și specificitate narațiunii."
+            ];
+            
+            let html = '<ul class="list-disc list-inside space-y-2">';
+            improvements.forEach(improvement => {
+                html += `<li>${improvement}</li>`;
+            });
+            html += '</ul>';
+            
+            return html;
+        }
+
+        // Răspunsuri generice pentru orice altă categorie
+        function generateGenericResponse(question, personalContext) {
+            return "Acest răspuns a fost generat pentru întrebarea: " + question.title + ". Conține informații personalizate și detaliate care reflectă o înțelegere profundă a subiectului și include exemple concrete din viața reală.";
+        }
+
+        function generateGenericExample(question, personalContext) {
+            return "Exemplu personal detaliat care ilustrează punctele principale din răspuns. Include detalii senzoriale, cronologie clară, și reflecții personale autentice. Acest exemplu demonstrează lecțiile învățate și schimbarea de perspectivă.";
+        }
+
+        // Actualizare progres
+        function updateProgress() {
+            const totalQuestions = questions.length;
+            const answeredCount = answeredQuestions.size;
+            
+            document.getElementById('answeredQuestions').textContent = `${answeredCount}/${totalQuestions}`;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = `${(answeredCount / totalQuestions) * 100}%`;
+            
+            updateRecordedAnswersCount();
+            updateGeneratedAnswersCount();
+        }
+
+        // Actualizare număr răspunsuri înregistrate
+        function updateRecordedAnswersCount() {
+            const recordedCount = Object.keys(recordedAnswers).length;
+            document.getElementById('recordedAnswers').textContent = recordedCount;
+        }
+
+        // Actualizare număr răspunsuri generate
+        function updateGeneratedAnswersCount() {
+            const generatedCount = Object.keys(generatedAnswers).length;
+            document.getElementById('generatedAnswers').textContent = generatedCount;
+        }
+    </script>
+</body>
+</html>
